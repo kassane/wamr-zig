@@ -1,0 +1,17 @@
+name: Zig
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: mlugg/setup-zig@v1
+      - name: zig fmt
+        run: zig fmt --ast-check --check */*.zig
