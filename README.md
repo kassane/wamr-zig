@@ -4,12 +4,12 @@
 
 Based on [WAMR Rust SDK](https://github.com/bytecodealliance/wamr-rust-sdk). It is the wrapper
 of [*wasm_export.h*](https://github.com/bytecodealliance/wasm-micro-runtime/blob/main/core/iwasm/include/wasm_export.h) but with Zig style.
-It is more convenient to use WAMR in Rust with this crate.
 
 
 ### Requirements
 
 - [Zig](https://ziglang.org/download/) v0.13.0 or master.
+- [CMake](https://cmake.org/download/) v3.12.0 or master.
 - [LLVM libs](https://github.com/llvm/llvm-project/releases) v16.0.0 or master.
 
 #### Core concepts
