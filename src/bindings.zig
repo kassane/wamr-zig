@@ -1,4 +1,5 @@
-pub const c = @cImport({
-    @cInclude("wasm_export.h");
-    @cInclude("wasm_c_api.h");
-});
+// 'c' namespace module
+pub const c = struct {
+    pub const wasm_export = @import("wasm_export");
+    pub const wasm_c = @import("wasm_c_api");
+};

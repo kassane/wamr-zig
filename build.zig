@@ -6,19 +6,50 @@ pub fn build(b: *std.Build) void {
 
     const wamrPath = b.dependency("WAMR", .{}).path("core/iwasm/include");
 
+    // TODO: https://github.com/ziglang/zig/issues/20630
+    const wasmC_bindgen = b.addTranslateC(.{
+        .link_libc = true,
+        .optimize = optimize,
+        .target = target,
+        .root_source_file = .{
+            // get absolute path of wamr/wasm_c_api.h
+            .cwd_relative = b.pathJoin(&.{
+                wamrPath.getPath(b),
+                "wasm_c_api.h",
+            }),
+        },
+        .use_clang = true, // TODO: set 'false' use fno-llvm/fno-clang
+    });
+
+    const wasmExport_bindgen = b.addTranslateC(.{
+        .link_libc = true,
+        .optimize = optimize,
+        .target = target,
+        .root_source_file = .{
+            // get absolute path of wamr/wasm_export.h
+            .cwd_relative = b.pathJoin(&.{
+                wamrPath.getPath(b),
+                "wasm_export.h",
+            }),
+        },
+        .use_clang = true, // TODO: set 'false' use fno-llvm/fno-clang
+    });
+
     const wamr_module = b.addModule("wamr", .{
         .root_source_file = b.path("src/bindings.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
-    wamr_module.addIncludePath(wamrPath);
+    wamr_module.addImport("wasm_export", wasmExport_bindgen.addModule("wasm_export"));
+    wamr_module.addImport("wasm_c_api", wasmC_bindgen.addModule("wasm_c_api"));
     for (llvm_libs) |name| {
         wamr_module.linkSystemLibrary(name, .{});
     }
-    wamr_module.link_libc = true;
 
     buildTest(b, wamr_module);
 }
+
 fn buildTest(b: *std.Build, module: *std.Build.Module) void {
     const lib_unit_tests = b.addTest(.{
         .name = "wamr-test",
