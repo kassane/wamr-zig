@@ -7,7 +7,7 @@ pub fn build(b: *std.Build) void {
     const wamr_zig = b.dependency("wamr_zig", .{});
 
     const exe = b.addExecutable(.{
-        .name = "hello",
+        .name = "wamr_cli",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
